@@ -1,0 +1,43 @@
+# Model Performance Comparison Table
+
+## Table 1: Performance Comparison of SVM, GBC, and XGBoost Models
+
+| Metric | SVM | GBC | XGBoost |
+|--------|-----|-----|---------|
+| Accuracy | 0.9770 | 0.9770 | 0.9847 |
+| Precision (macro) | 0.9771 | 0.9774 | 0.9847 |
+| Recall (macro) | 0.9771 | 0.9770 | 0.9848 |
+| F1-Score (macro) | 0.9771 | 0.9771 | 0.9847 |  
+
+## Table 2: Performance Comparison of Model Combinations
+
+| Metric | SVM+GBC | SVM+XGB | GBC+XGB | SVM+GBC+XGB |
+|--------|---------|---------|---------|-------------|
+| Accuracy | 0.9770 | 0.9770 | 0.9770 | 0.9847 |
+| Precision (macro) | 0.9771 | 0.9771 | 0.9774 | 0.9847 |
+| Recall (macro) | 0.9771 | 0.9771 | 0.9770 | 0.9848 |
+| F1-Score (macro) | 0.9771 | 0.9771 | 0.9771 | 0.9847 |
+
+## Key Findings:
+
+### Individual Model Performance:
+- **XGBoost** achieves the highest overall performance across all metrics
+- **SVM** and **GBC** show very similar performance with slight variations
+- XGBoost outperforms both SVM and GBC by approximately 0.7-0.8% in accuracy
+
+### Model Combinations:
+- **SVM+GBC+XGB** (ensemble) achieves the best performance, matching XGBoost
+- **SVM+GBC** and **SVM+XGB** combinations maintain SVM-level performance
+- **GBC+XGB** combination shows slight improvement in precision compared to individual models
+
+### Performance Analysis:
+- All models demonstrate excellent performance (>97% accuracy)
+- XGBoost shows consistent superiority in all evaluation metrics
+- Ensemble methods provide marginal improvements but don't significantly exceed the best individual model
+- The consistency across metrics suggests robust model performance with minimal overfitting
+
+### Recommendations:
+- **XGBoost** is recommended as the primary model due to its superior performance
+- **SVM** remains a strong alternative with comparable results and faster training time
+- **Ensemble approaches** can be considered for critical applications requiring maximum reliability
+- All models are suitable for deployment given their high performance metrics

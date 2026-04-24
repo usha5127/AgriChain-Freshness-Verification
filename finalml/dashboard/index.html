@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced ML Ablation Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* Advanced ML Dashboard Styles - Matching Price Prediction Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Use same design system variables as Price Prediction */
+:root {
+  --font-base: 0.7rem;
+  --font-label: 0.7rem;
+  --font-input: 0.8rem;
+  --font-small: 0.6rem;
+  --font-large: 0.9rem;
+  
+  --spacing-xs: 0.2rem;
+  --spacing-sm: 0.3rem;
+  --spacing-md: 0.4rem;
+  --spacing-lg: 0.5rem;
+  --spacing-xl: 0.6rem;
+  --spacing-xxl: 0.8rem;
+  
+  --border-radius: 6px;
+  --border-radius-sm: 4px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  --primary-green: #2d5016;
+  --accent-green: #4a7c28;
+  --light-green: #8bc34a;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+}
+
+.advanced-ml-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #faf9f6 0%, #f5f5f0 100%) !important;
+  font-family: 'Inter', sans-serif;
+  padding: 1rem 0.5rem;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Full-width Dashboard Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 3rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  align-items: start;
+}
+
+/* Prediction Section - Compact Left Panel */
+.prediction-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  height: fit-content;
+  transition: all 0.3s ease;
+}
+
+.prediction-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: #10b981;
+}
+
+.prediction-section h2 {
+  font-size: var(--font-large);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 var(--spacing-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Ablation Section - Right Panel */
+.ablation-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 0 0 0 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  height: fit-content;
+  transition: all 0.3s ease;
+}
+
+.ablation-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: #10b981;
+}
+
+.ablation-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ablation-section h2 {
+  font-size: var(--font-large);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 var(--spacing-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Header - Matching Price Prediction Theme */
+.advanced-ml-dashboard .dashboard-header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border-radius: 16px;
+  padding: 0.5rem var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  overflow: visible !important;
+  position: relative;
+  z-index: 10;
+  min-height: 40px;
+}
+
+.advanced-ml-dashboard .dashboard-header h1 {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4) !important;
+  margin: 0 0 0.1rem 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  white-space: normal;
+  overflow: visible;
+}
+
+.advanced-ml-dashboard .dashboard-header p {
+  font-size: calc(var(--font-small) + 0.05rem) !important;
+  opacity: 0.9 !important;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 400;
+  color: white !important;
+}
+
+/* Input Groups - Compact Visual Organization */
+.input-group {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.input-group:hover {
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+  transform: translateY(-1px);
+}
+
+.input-group h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Prediction Form Grid Layout - Compact & Dense */
+.prediction-section .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: 0;
+}
+
+/* Enhanced Button Styling - Primary CTA Focus */
+.predict-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius);
+  font-size: var(--font-input);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.predict-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+/* Metrics Display - Full Width */
+.metrics-display {
+  background: var(--bg-light);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  border: 1px solid #e5e7eb;
+  margin-top: var(--spacing-md);
+  width: 100%;
+}
+
+/* Ablation Results - Matching Price Prediction Card Style */
+.ablation-results {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06);
+  overflow: visible !important;
+  position: relative;
+}
+
+.ablation-results h2 {
+  font-size: var(--font-large);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0 0 var(--spacing-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.performance-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.performance-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #10b981;
+}
+
+.performance-card.best {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.rank-badge {
+  background: #10b981;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.metric-name {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.metric-score {
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+/* Enhanced Button Styling */
+.predict-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  width: 100%;
+  justify-content: center;
+}
+
+.predict-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+/* Responsive adjustments for full-width layout */
+@media (max-width: 768px) {
+  .advanced-ml-dashboard {
+    padding: 0.5rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .input-group {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .prediction-section .form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+  
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .advanced-ml-dashboard {
+    padding: 0.25rem;
+  }
+  
+  .prediction-section .form-grid {
+    gap: 2px;
+  }
+  
+  .input-group {
+    padding: var(--spacing-xs);
+  }
+}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const AdvancedMLDashboardSimple = () => {
+            // Model and feature selections
+            const [models, setModels] = useState({ svm: true, gbc: true, xgb: false });
+            const [features, setFeatures] = useState({ voc: true, temperature: true, humidity: true });
+
+            // Mode selection: 'normal' or 'closed'
+            const [mode, setMode] = useState('normal');
+
+            // Loaded CSV rows and filtered rows for display
+            const [csvRowsNormal, setCsvRowsNormal] = useState(null);
+            const [csvRowsClosed, setCsvRowsClosed] = useState(null);
+            const [filtered, setFiltered] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const toggleModel = (k) => setModels((m) => ({ ...m, [k]: !m[k] }));
+            const toggleFeature = (k) => setFeatures((f) => ({ ...f, [k]: !f[k] }));
+
+            // Parse ablation_results.csv text into array of objects
+            const parseCsv = (text) => {
+                const lines = text.trim().split(/\r?\n/);
+                if (!lines.length) return [];
+                const splitSafe = (line) => line.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/);
+                const headers = splitSafe(lines[0]).map((h) => h.replace(/^\"|\"$/g, ''));
+                return lines.slice(1).filter(Boolean).map((ln) => {
+                    const cols = splitSafe(ln).map((c) => c.replace(/^\"|\"$/g, ''));
+                    const row = {};
+                    headers.forEach((h, i) => (row[h] = cols[i]));
+                    ['acc', 'precision_macro', 'recall_macro', 'f1_macro'].forEach((k) => {
+                        if (row[k] !== undefined) row[k] = Number(row[k]);
+                    });
+                    return row;
+                });
+            };
+
+            // Format numbers to fewer decimals for display
+            const fmt = (v) => (Number.isFinite(v) ? Number(v).toFixed(4) : v);
+
+            // Compute ablation "setting" from feature checkboxes
+            const computeSetting = () => {
+                const { voc, temperature, humidity } = features;
+                if (voc && temperature && humidity) return 'full';
+                if (!voc && temperature && humidity) return 'w/o_VOC';
+                if (voc && !temperature && humidity) return 'w/o_Temperature';
+                if (voc && temperature && !humidity) return 'w/o_Humidity';
+                if (voc && !temperature && !humidity) return 'VOC_only';
+                if (!voc && temperature && !humidity) return 'Temperature_only';
+                if (!voc && !temperature && humidity) return 'Humidity_only';
+                return '__none__';
+            };
+
+            const selectedModelKeys = () => {
+                const active = {
+                    svm: !!models.svm,
+                    gbc: !!models.gbc,
+                    xgb: !!models.xgb,
+                };
+
+                const count = [active.svm, active.gbc, active.xgb].filter(Boolean).length;
+
+                // No model selected
+                if (count === 0) return [];
+
+                // Single model selected → show only that model's row
+                if (count === 1) {
+                    if (active.svm) return ['SVM'];
+                    if (active.gbc) return ['GBC'];
+                    if (active.xgb) return ['XGB'];
+                }
+
+                // Two models selected → show only the corresponding combination row
+                if (count === 2) {
+                    if (active.svm && active.gbc) return ['COMB_SG'];
+                    if (active.svm && active.xgb) return ['COMB_SX'];
+                    if (active.gbc && active.xgb) return ['COMB_GX'];
+                }
+
+                // All three models selected → show only the triple combination row
+                if (count === 3) {
+                    return ['COMBINED3'];
+                }
+
+                return [];
+            };
+
+            const handleCalculate = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+                    const endpoint = mode === 'closed' ? '/api/ml/ablation-closed' : '/api/ml/ablation-svm';
+                    const isClosed = mode === 'closed';
+                    let rows = isClosed ? csvRowsClosed : csvRowsNormal;
+                    if (!rows) {
+                        const resp = await fetch(`http://localhost:3002${endpoint}`);
+                        const data = await resp.json();
+                        if (!data.success || data.type !== 'csv') {
+                            throw new Error(isClosed ? 'Closed ablation CSV not found' : 'Ablation CSV not found in svm/unified_outputs');
+                        }
+                        rows = parseCsv(data.data);
+                        if (isClosed) {
+                            setCsvRowsClosed(rows);
+                        } else {
+                            setCsvRowsNormal(rows);
+                        }
+                    }
+                    const setting = computeSetting();
+                    const modelKeys = selectedModelKeys();
+                    const filt = rows.filter((r) => r.setting === setting && modelKeys.includes(r.model));
+                    setFiltered(filt);
+                } catch (e) {
+                    setError(e.message || 'Failed to calculate');
+                    setFiltered(null);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="advanced-ml-dashboard">
+                    <div className="dashboard-header">
+                        <h1>🧠 Advanced ML Dashboard</h1>
+                        <p>Select models and environment features, choose normal or closed mode, then calculate to see ablation results.</p>
+                    </div>
+
+                    <div className="dashboard-grid" style={{ maxWidth: 1100, margin: '0 auto' }}>
+                        {/* Selection Card */}
+                        <div className="prediction-section">
+                            <h2>🔮 Advanced Selection</h2>
+
+                            <div className="input-group">
+                                <h3>📂 Mode</h3>
+                                <div className="form-grid">
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="mode"
+                                            value="normal"
+                                            checked={mode === 'normal'}
+                                            onChange={() => setMode('normal')}
+                                        />
+                                        Normal
+                                    </label>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="mode"
+                                            value="closed"
+                                            checked={mode === 'closed'}
+                                            onChange={() => setMode('closed')}
+                                        />
+                                        Closed
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div className="input-group">
+                                <h3>🤖 Models</h3>
+                                <div className="form-grid">
+                                    <label><input type="checkbox" checked={models.svm} onChange={() => toggleModel('svm')} /> SVM</label>
+                                    <label><input type="checkbox" checked={models.gbc} onChange={() => toggleModel('gbc')} /> GBC</label>
+                                    <label><input type="checkbox" checked={models.xgb} onChange={() => toggleModel('xgb')} /> XGB</label>
+                                </div>
+                            </div>
+
+                            <div className="input-group">
+                                <h3>🌡️ Environment Features</h3>
+                                <div className="form-grid">
+                                    <label><input type="checkbox" checked={features.temperature} onChange={() => toggleFeature('temperature')} /> Temperature</label>
+                                    <label><input type="checkbox" checked={features.humidity} onChange={() => toggleFeature('humidity')} /> Humidity</label>
+                                    <label><input type="checkbox" checked={features.voc} onChange={() => toggleFeature('voc')} /> VOC</label>
+                                </div>
+                            </div>
+
+                            <button onClick={handleCalculate} className="predict-btn" disabled={loading}>
+                                {loading ? '⏳ Calculating...' : '🧮 Calculate'}
+                            </button>
+                            {error && <div className="metrics-display" style={{color: 'red'}}>{error}</div>}
+                        </div>
+
+                        {/* Ablation Results Card */}
+                        <div className="ablation-section">
+                            <h3>🔬 Ablation Study</h3>
+                            {!filtered && !loading && (
+                                <div className="metrics-display"><em>Select models/features and click Calculate.</em></div>
+                            )}
+                            {filtered && (
+                                <div className="ablation-results">
+                                    <div className="performance-grid">
+                                        {filtered.map((m, idx) => (
+                                            <div key={m.model + m.setting + idx} className={`performance-card ${idx === 0 ? 'best' : ''}`}>
+                                                <div className="card-header">
+                                                    <h3>{m.model}</h3>
+                                                    <span className="rank-badge">{m.setting}</span>
+                                                </div>
+                                                <div className="metrics-list">
+                                                    <div className="metric-item"><span className="metric-name">Accuracy</span><span className="metric-score">{fmt(m.acc)}</span></div>
+                                                    <div className="metric-item"><span className="metric-name">Precision (macro)</span><span className="metric-score">{fmt(m.precision_macro)}</span></div>
+                                                    <div className="metric-item"><span className="metric-name">Recall (macro)</span><span className="metric-score">{fmt(m.recall_macro)}</span></div>
+                                                    <div className="metric-item"><span className="metric-name">F1 (macro)</span><span className="metric-score">{fmt(m.f1_macro)}</span></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the app using React 18 createRoot
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AdvancedMLDashboardSimple />);
+    </script>
+</body>
+</html>
